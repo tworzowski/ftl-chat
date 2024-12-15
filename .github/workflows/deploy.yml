@@ -1,1 +1,27 @@
- 
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Login to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "ftl-chat"
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          
+      - name: Set environment variables
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku config:set ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }} -a ftl-chat
+          heroku config:set SUPABASE_URL=${{ secrets.SUPABASE_URL }} -a ftl-chat
+          heroku config:set SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} -a ftl-chat
